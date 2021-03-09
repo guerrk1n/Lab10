@@ -6,108 +6,138 @@
 
 using namespace std;
 void createFile();
-void openFile();
+void printData();
 void writeFile();
 void readFile();
+void info();
+void openFile(string);
+void sort();
 string location();
 FILE* file;
 string locationName;
+int fieldsAmount;
 struct railway {
+	char finalDestination[10];
 	int numberTrain;
-	string finalDestination;
-	int time;
 	int freeSeats;
+	int time;
 };
-railway railwayArray[10];
+railway railwayArray[5];
 
 int main()
 {
-    int index;
-    
 	while (true) {
-		std::cout << "Make a choise.\n"
+		cout << "Make a choise.\n"
 			<< "\t1 - Create\n"
-			<< "\t2 - Open and print\n"
-			<< "\t3 - Exit" <<endl;
+			<< "\t2 - Print data\n"
+			<< "\t3 - Write data\n"
+			<< "\t4 - Info about free seat to destination\n"
+			<< "\t6 - Exit\n" << endl;
 		switch (_getch()) {
 		case '1':
 			createFile();
 			break;
 		case '2':
-			openFile();
+			printData();
 			break;
 		case '3':
-			exit(1);
+			writeFile();
 			break;
-
+		case '4':
+			info();
+			break;
+		case '5':
+			sort();
+			break;
+		case '6':
+			exit(0);
+			break;
+		default: 
+			printf("Check your input \n");
+			break;
 		}
 	}
 }
 
-	void createFile() {
-		if (locationName.length() != 0) {
-			
-		}
-		if ((file = fopen(location().c_str(), "w")) == NULL) {
-			cout << "Error while creating";
+void createFile() {
+	openFile("w");
+	printf("File created \n");
+}
+
+void printData() {
+
+		openFile("r");
+		readFile();
+		for(int i=0; i < fieldsAmount; i++)
+		printf("%s %d %d %d\n", railwayArray[i].finalDestination, railwayArray[i].numberTrain,
+			railwayArray[i].freeSeats, railwayArray[i].time);
+		fclose(file);
+}
+
+void openFile(string param) {
+	if (locationName.length() != 0) {
+		if ((file = fopen(locationName.c_str(), param.c_str())) == NULL) {
+			printf("Error while opening \n");
 			exit(1);
 		}
-		else {
-			cout << "File create";
-			fclose(file);
-		}
+	}else if ((file = fopen(location().c_str(), param.c_str())) == NULL) {
+		printf("Error while opening \n");
+		exit(1);
 	}
+	
+}
 
-	void openFile() {
+string location() {
+	printf("Enter file location \n");
+	cin >> locationName;
+	return locationName;
+}
 
-		if ((file = fopen(location().c_str(), "r")) == NULL) {
-			cout << "Error while opening";
-			exit(1);
-		}
-		while (true) {
-			std::cout << "Make a choise.\n"
-				<< "\t1 - Read file\n"
-				<< "\t2 - Write file\n"
-				<< "\t3 - Exit" << endl;
-			switch (_getch()) {
-			case '1':
-				readFile();
-				break;
-			case '2':
-				writeFile();
-				break;
-			case '3':
-				exit(1);
-				break;
-
-			}
-		}
+void readFile() {
+	
+	fieldsAmount = 0;
+	rewind(file);
+	while (!feof(file)) {
+		fscanf(file," %s %d%d%d\n", &railwayArray[fieldsAmount].finalDestination,&railwayArray[fieldsAmount].numberTrain,
+			&railwayArray[fieldsAmount].freeSeats, &railwayArray[fieldsAmount].time);
+		fieldsAmount++;
 	}
-		string location() {
-			cout << "Enter file location" << endl;
-			cin >> locationName;
-			return locationName;
+	fclose(file);
+}
+void writeFile() {
+	openFile("w");
+	string input;
+	printf("Enter CTRL + Z to exit \n");
+		while (getline(cin, input)) {
+			printf("Destination,Train number, Free Seats, Time: ");
+			fputs(input.c_str(), file);
 		}
-
-		void readFile() {
-			rewind(file);
-			int counter = 0;
-			while (!feof(file)) {
-				printf("%d %s %d %d\n", railwayArray[counter].numberTrain, railwayArray[counter].finalDestination.c_str(),
-					railwayArray[counter].freeSeats, railwayArray[counter].time);
-				counter++;
-			}
-			cout << "Amount of fields: " << counter;
 			fclose(file);
-		}
-		void writeFile() {
-			rewind(file);
-			string inputString;
-			while (getline(cin,inputString)) {
-				cout << "Enter number of Train, Final Destination of Train, Free Seats in Trains, Time of Department";
-				fputs(inputString.c_str(), file);
-				fclose(file);
-			}
-
 		}
 	
+
+void info() {
+	string destination;
+	openFile("r");
+	readFile();
+	printf("Enter destination: ");
+	cin >> destination;
+	bool freeSeats = false;
+	printf("Avaible trains to: %s \n",destination);
+	for (int i = 0; i < fieldsAmount; i++) {
+		if (destination == railwayArray[i].finalDestination && railwayArray[i].freeSeats > 0) {
+			freeSeats = true;
+			printf("%s %d %d %d\n", railwayArray[i].finalDestination, railwayArray[i].numberTrain,
+				railwayArray[i].freeSeats, railwayArray[i].time);
+		}
+	}
+	if (!freeSeats) {
+		printf("There is no avaibles train to your destination.");
+	}
+}
+
+void sort() {
+	
+}
+
+
