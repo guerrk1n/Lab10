@@ -12,6 +12,8 @@ void readFile();
 void info();
 void openFile(string);
 void sort();
+void quicksort();
+void insertionsort();
 string location();
 FILE* file;
 string locationName;
@@ -32,6 +34,7 @@ int main()
 			<< "\t2 - Print data\n"
 			<< "\t3 - Write data\n"
 			<< "\t4 - Info about free seat to destination\n"
+			<< "\t5 - Sort\n"
 			<< "\t6 - Exit\n" << endl;
 		switch (_getch()) {
 		case '1':
@@ -137,7 +140,39 @@ void info() {
 }
 
 void sort() {
+	/*cout << "Make a choise.\n"
+		<< "\t1 - QuickSort\n"
+		<< "\t2 - InsertionSort\n" << endl;
+	switch (_getch())
+	{
+	case '1':
+		quicksort();
+		break;
+	case '2':
+		insertionsort();
+		break;
+	default:
+		printf("Check your input \n");
+		break;
+	}*/
+	insertionsort();
+}
+
+void quicksort() {
 	
+}
+
+void insertionsort() {
+	openFile("r");
+	readFile();
+	for (int i = 1; i < fieldsAmount; i++) {
+		for (int j = i; j > 0 && railwayArray[j].time < railwayArray[j - 1].time; j--) {
+			swap(railwayArray[j - 1], railwayArray[j]);
+		}
+	}
+	for (int i = 0; i < fieldsAmount; i++)
+		printf("%s %d %d %d\n", railwayArray[i].finalDestination, railwayArray[i].numberTrain,
+			railwayArray[i].freeSeats, railwayArray[i].time);
 }
 
 
